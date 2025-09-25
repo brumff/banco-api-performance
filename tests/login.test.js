@@ -3,12 +3,15 @@ import http from 'k6/http';
 
 
 export const options = {
-    vus: 10,
-    duration: '30s',
-     thresholds: {
+    stages: [
+        { duration: '5s', target: 10 },
+        { duration: '20s', target: 10 },
+        { duration: '5s', target: 0 },
+    ],
+    thresholds: {
         http_req_duration: ['p(90)<3000', 'max<5000'],
         http_req_failed: ['rate<0.01']
-     }
+    }
 };
 
 //somente um por arquivo 
@@ -29,7 +32,7 @@ export default function () {
 
     check(res, {
         'Validar que o status é 200': (r) => r.status === 200,
-        'Validar que token é string': (r) => typeof(r.json().token) == 'string'
+        'Validar que token é string': (r) => typeof (r.json().token) == 'string'
     })
     sleep(1);
 
